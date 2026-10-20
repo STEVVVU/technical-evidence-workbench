@@ -1,0 +1,56 @@
+name: Evidence Workbench
+
+on:
+  push:
+    branches: [workbench]
+  pull_request:
+    branches: [workbench]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-workbench-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.13.3'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install locked backend dependencies
+        run: uv sync --project backend --locked
+      - name: Check extension and helpers
+        run: uv run --project backend --locked ruff check extensions/evidence-workbench scripts/workbench.py scripts/verify_workbench.py
+      - name: Test evidence records and boundaries
+        run: uv run --project backend --locked python -m pytest --confcutdir extensions/evidence-workbench/tests extensions/evidence-workbench/tests tests/workbench -q
+      - name: Drive the real Gateway workflow
+        run: uv run --project backend --locked python scripts/verify_workbench.py --feature evidence --evidence .deer-flow/verification/ci
+      - name: Install locked frontend dependencies
+        working-directory: frontend
+        run: npx --yes pnpm@10.26.2 install --frozen-lockfile
+      - name: Check frontend
+        working-directory: frontend
+        run: npx --yes pnpm@10.26.2 check
+      - name: Test workbench surfaces
+        working-directory: frontend
+        run: npx --yes pnpm@10.26.2 exec rstest run tests/unit/core/extensions/workbench.dom.test.ts tests/unit/core/extensions/surfaces.dom.test.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gateway-verification
+          path: |
+            .deer-flow/verification/ci/actions.json
+            .deer-flow/verification/ci/result.json
+            .deer-flow/verification/ci/gateway.log
