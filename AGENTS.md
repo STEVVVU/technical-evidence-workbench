@@ -1,6 +1,8 @@
 # AGENTS.md
 
 Guidance source; `CLAUDE.md` imports `@AGENTS.md`.
+
+This checkout adds a technical evidence workbench through the public extension API. See `docs/WORKBENCH.md`, `extensions/evidence-workbench/AGENTS.md`, and `.agents/skills/verify-workbench/SKILL.md`. Use `scripts/workbench.py init|gateway|web` for its local loopback development path. Its domain stays outside the host runtime; preserve upstream attribution and existing authentication. Do not infer factual truth from quote matching or a recorded evidence relation. Restart Gateway after changing packaged browser assets, which are snapshotted at plugin registration.
 Module guides:
 
 - **[backend/AGENTS.md](backend/AGENTS.md)** — backend depth: harness/app split, agent &

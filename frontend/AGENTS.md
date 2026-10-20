@@ -2,6 +2,8 @@
 
 DeerFlow frontend guidance source of truth; `CLAUDE.md` imports `@AGENTS.md`.
 
+This checkout's product name and default authenticated route live in `src/core/workbench.ts`. The investigation UI is the packaged browser module in `../extensions/evidence-workbench/evidence_workbench/static/`, mounted through the existing authenticated extension host. Preserve host account, CSRF, disposal and navigation fences; do not add a second authentication or agent runtime. UI behavior checks are in `tests/unit/core/extensions/workbench.dom.test.ts`; real-product verification is documented in `../.agents/skills/verify-workbench/SKILL.md`.
+
 ## Project Overview
 
 DeerFlow's Next.js 16 frontend provides thread-based AI conversations with streaming responses, artifacts, skills, and tools through a LangGraph backend.
