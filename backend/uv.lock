@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32'",
@@ -805,6 +805,7 @@ wheels = [
 name = "deer-flow"
 version = "2.2.0.dev0"
 source = { virtual = "." }
+default-groups = ["dev", "extensions"]
 dependencies = [
     { name = "bcrypt" },
     { name = "deerflow-extension-api" },
@@ -870,6 +871,9 @@ dev = [
     { name = "ruff" },
     { name = "textual" },
 ]
+extensions = [
+    { name = "deerflow-extension-evidence-workbench" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -920,12 +924,23 @@ dev = [
     { name = "ruff", specifier = ">=0.14.11" },
     { name = "textual", specifier = ">=0.80" },
 ]
-extensions = []
+extensions = [{ name = "deerflow-extension-evidence-workbench", editable = "../extensions/evidence-workbench" }]
 
 [[package]]
 name = "deerflow-extension-api"
 version = "0.2.8"
 source = { editable = "packages/extension-api" }
+
+[[package]]
+name = "deerflow-extension-evidence-workbench"
+version = "0.1.0"
+source = { editable = "../extensions/evidence-workbench" }
+dependencies = [
+    { name = "deerflow-extension-api" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "deerflow-extension-api", specifier = ">=0.2.7,<0.3" }]
 
 [[package]]
 name = "deerflow-harness"
